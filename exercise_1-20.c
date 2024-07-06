@@ -2,24 +2,27 @@
 * replaces tabs in the input with the proper number of blanks to space
 * to the next tab stop.
 */
-
 #include <stdio.h>
 
 #define COLUMN 10
 
 int main()
 {
-    int c, i;
-    while ((c = getchar()) != EOF)
+    int c, i, j;
+    for (i = 0; ((c = getchar()) != EOF); i++)
     {
-        if (c == '\t') 
-        for (i = COLUMN; i >= 0; i--)
+        if (c == '\n')
         {
-            putchar(' ');
+            i = 0;
         }
-        else {
-            putchar(c);
+        if (c == '\t')  
+        {
+            for (j = 0; ((i + j) % COLUMN) != 0; j++)
+            {
+                putchar(' ');
+            }    
         }
+        putchar(c);       
     }
     return 0;
 }
