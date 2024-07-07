@@ -5,10 +5,12 @@
 /* determine the ranges of char, short, int and long variables,
 both signed and unsigned, by printing appropriate values fom standard headers
 and by direct computation
-
 */
+char max(char c);
+
 int main()
 {
+    /* SIGNED CHAR */
     printf("*******\n");
     printf("CHAR\n");
     printf("header max : %d\n", CHAR_MAX);
@@ -37,14 +39,18 @@ int main()
     printf("max : %d\n", charmax);
     printf("min : %d\n", charmin);
 
+
+    /* SHORT */
     printf("");
     printf("*******\n");
     printf("SHORT\n");
     printf("header max : %d\n", SHRT_MAX);
     printf("header min : %d\n", SHRT_MIN);
     
+    
     int shortmax = 0;
     short s = 0;
+ 
     while (++s > shortmax)
     {
         if (s > shortmax)
@@ -107,7 +113,7 @@ int main()
     {
         if (l > longmax)
         {
-            longmax = i;
+            longmax = l;
         }
     }
 
@@ -123,6 +129,14 @@ int main()
 
     printf("max : %d\n", longmax);
     printf("min : %d\n", longmin);
+
+    /* FLOAT */
+
+    printf("");
+    printf("*******\n");
+    printf("FLOAT\n");
+    printf("header max : %.g\n", FLT_MAX);
+    printf("header min : %.g\n", FLT_MIN);
 
     return 0;
 }
