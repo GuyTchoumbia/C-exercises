@@ -9,14 +9,18 @@ void getInput(char input[]);
 
 int main()
 {
+
     int x, y;
     scanf("%d", &x);
+    printf("x : ");
     intToBinary(x);
 
     scanf("%d", &y);
+    printf("y : ");
     intToBinary(y);    
 
-    intToBinary(setbits(x, 2, 3, y));
+
+    intToBinary(setbits(x, 4, 3, y));
     return 0;
 }
 
@@ -28,15 +32,20 @@ int getbits(int x, int p, int n)
 
 int setbits(int x, int p, int n, int y)
 {
-    // shift y left by n bits (add n zero at the end)
-    y = y << n;
-    printf("shifting y by 3 == multiply by 8\n");
+    y &= (1 << n) - 1; // mask n bits large
+    printf("mask for y for %d rightmost bits : ", n);
+    intToBinary(y);
+    y <<= (p - n + 1); // shift y by the same position and number than the bits extracted from x 
+    printf("shift y %d times : ", p - n + 1);
     intToBinary(y);
 
-    printf("3 last bits of x : ");
-    intToBinary(getbits(x,p,n));
+    //poke a hole in x => mask everything but the bits targeted
+    x &= ~(((1 << n) - 1) << (p - n + 1));
+    printf("poke a hole in x : ");
+    intToBinary(x);
 
-    // now y | getbits(x) should be enough
-    return y | getbits(x, p, n); 
+    printf("x | y : ");
+
+    return y | x;
 }
 
