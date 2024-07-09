@@ -31,7 +31,6 @@ void intToBinary(int x)
             --i;
         }     
     }
-    // closing character
-    // binary[i] = '\0';
-    // printf(" --> %s\n", binary); 
+    printf("\n");
+    
 }
