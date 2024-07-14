@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 
 void intToBinary(int x)
 {   
@@ -13,7 +14,7 @@ void intToBinary(int x)
     
     while (i >= 0)
     {
-        bit = (x >> i) & 1;
+        bit = (x >> i) & 1;  // checks if bit is 1, starting from the most significant
         if (leadingzero)  
             if (!bit)
             {
@@ -32,5 +33,17 @@ void intToBinary(int x)
         }     
     }
     printf("\n");
-    
+}
+
+/* reverse: reverse string in place */
+void reverse(char s[])
+{
+    int c, i, j;
+
+    for (i = 0, j = strlen(s) - 1; i < j; i++, j--)
+    {
+        c = s[i];
+        s[i] = s[j];
+        s[j] = c;
+    }
 }
