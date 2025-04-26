@@ -21,7 +21,7 @@ int main()
 double _atof(char s[])
 {
     double val, power;
-    int i, sign, exponant, exponantSign;
+    int i, sign, exponent, exponentSign;
 
     for (i = 0; isspace(s[i]); i++);  // isspace tests if the char is a white space ( == '/s') => skip whitespaces at the beginning
     sign = (s[i] == '-') ? -1 : 1; // test for minus sign
@@ -42,7 +42,7 @@ double _atof(char s[])
         val = 10.0 * val + (s[i] - '0');
         power *= 10;
     }
-    // add scientific notation management: same principle as before, with e/E, another sign, an exponant value
+    // add scientific notation management: same principle as before, with e/E, another sign, an exponent value
     if (s[i] == '\0')
     {
         return sign * val / power;
@@ -51,14 +51,14 @@ double _atof(char s[])
     {
         i++;
     }
-    exponantSign = (s[i] == '-') ? -1 : 1;
+    exponentSign = (s[i] == '-') ? -1 : 1;
     if (s[i] == '+' || s[i] == '-') // skip exponent sign char
     {
         i++;
     }
-    for (exponant = 0; isdigit(s[i]); i++)
+    for (exponent = 0; isdigit(s[i]); i++)
     {
-        exponant = 10 * exponant + (s[i] - '0');
+        exponent = 10 * exponent + (s[i] - '0');
     }
-    return sign * val / power * pow(10, exponantSign * exponant);
+    return sign * val / power * pow(10, exponentSign * exponent);
 }
