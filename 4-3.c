@@ -15,7 +15,7 @@ int main()
     double operand2;
     char s[MAXOP];
 
-    while ((type = getio(s)) != EOF)
+    while ((type = getop(s)) != EOF)
     {
         switch (type)
         {
