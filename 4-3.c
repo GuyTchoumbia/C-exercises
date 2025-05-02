@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h> /* for atof() */
 #include <ctype.h>
-#include <math.h>
+#include <math.h>  // for exp and pow
 
 #define MAXOP   10 /* max size of operand or operator */
 #define BUFSIZE 100
