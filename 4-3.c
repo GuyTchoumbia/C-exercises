@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h> /* for atof() */
 #include <ctype.h>
+#include <math.h>
 
-#define MAXOP   100 /* max size of operand or operator */
-#define NUMBER  '0' /* signal that a number was found */
+#define MAXOP   10 /* max size of operand or operator */
 #define BUFSIZE 100
 #define MAXVAL  100     /* maximum depth of val stack */
+#define NUMBER   '0' /* signal that a number was found */
 
 int getop(char []);
 void push(double);
@@ -55,6 +56,33 @@ int main()
                     printf("error: zero divisor\n");
                 }
                 break;
+            // 4-4: command to print the top element of the stack without popping
+            case '#':
+                if (sp > 0)
+                {
+                   printf("top stack value: %f\n", val[sp-1]);
+                }
+                break;
+            // 4-4: command to duplicate top stack value
+            case '!':
+                {
+                    push(val[sp-1]);
+                }
+                break;
+            // 4-4: command to swap the top two elements
+            case '|':
+                if (sp > 1)
+                {
+                   operand2 = pop();
+                   operand1 = pop();
+                   push(operand2);
+                   push(operand1);
+                }
+                break;
+            // clear the stack
+            case ':':
+                // we can't "empty" the array, just reinitialize it.
+                sp = 0; // can't pop, only push
             // 4-3 add % operator
             case '%':
                 operand2 = pop();
@@ -67,6 +95,12 @@ int main()
                     printf("error: zero divisor\n");
                 }
                 break;
+            // 4-5 add ext and pow
+            case '^':
+                push(pow(pop(), pop()));
+            case 'e':
+                push(exp(pop()));
+            // could add sin/cos with another symbol, but that's not satisfying
             case '\n':
                 printf("\t%.8g\n", pop());
                 break;
@@ -107,14 +141,14 @@ double pop(void)
 /* getop: get next operator or numeric operand */
 int getop(char s[])
 {
-    int i, ch, sign, next;
+    int i, ch, string, sign, next;
 
-    while ((s[0] = ch = getch()) == ' ' || ch == '\t'); // skip whitespace
+    while (isblank(s[0] = ch = getch())); // skip whitespace
 
-    s[1] = '\0'; // need to close the string at this point to test for isdigit
+    // operator
     if (!isdigit(ch) && ch != '.' && ch != '-')
     {
-        return ch;   /* not a number */
+        return ch;   
     }
     i = 0;
     // 4-3: negative
@@ -122,14 +156,13 @@ int getop(char s[])
     if (ch == '-')
     {
         // if space after, its an minus operator
-        if ((next = getch()) == ' ' || s[i] == '\t')
+        if ((next = getch()) == ' ' || next == '\t')
         {
             return ch;
         }
         // if digit or decimal sign behind, its a negative sign
         else if (isdigit(next) || next == '.')
         {
-            s[i] = ch;
             ch = next;
             ungetch(next);
         }
