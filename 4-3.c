@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h> /* for atof() */
 #include <ctype.h>
-#include <math.h>  // for exp and pow
+#include <math.h>
 
 #define MAXOP   10 /* max size of operand or operator */
 #define BUFSIZE 100
@@ -18,6 +18,7 @@ void ungetch(int);
 int sp = 0;             /* next free stack position*/
 double val[MAXVAL];     /* value stack*/
 /* external variables for getch/ungetch */
+char buffer = -1;
 char buf[BUFSIZE];      /* buffer for ungetch */
 int bufp = 0;           /* next free position in buf */
 
@@ -192,18 +193,28 @@ int getop(char s[])
 /* get a (possibly pushed back) character */
 int getch(void)       
 {
-    return (bufp > 0) ? buf[--bufp] : getchar();
+    int ch;
+    if (buffer >= 0)
+    {
+        ch = buffer;
+        buffer = -1;
+        return ch;
+    }
+    else
+    {
+        getchar();
+    }
 }
 
 /* push character back on input */
 void ungetch(int ch)
 {
-    if (bufp >= BUFSIZE)
+    if (buffer >= 0)
     {
         printf("ungetch: too many characters\n");
     }
     else
     {
-        buf[bufp++] = ch;
+        buffer = ch;
     }
 }
