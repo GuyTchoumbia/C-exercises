@@ -7,6 +7,8 @@
 #define BUFSIZE 100
 #define MAXVAL  100     /* maximum depth of val stack */
 #define NUMBER   '0' /* signal that a number was found */
+#define VARIABLE '1' /* signal that a number was found */
+
 
 int getop(char []);
 void push(double);
@@ -25,7 +27,7 @@ int bufp = 0;           /* next free position in buf */
 /* reverse polish calculator */
 int main()
 {
-    int type;
+    int type, r;
     double operand1, operand2;
     char s[MAXOP];
 
@@ -35,6 +37,10 @@ int main()
         {
             case NUMBER: 
                 push(atof(s));
+                break;
+            // 4-6: add a variable for the last printed value
+            case 'r': 
+                push(r);
                 break;
             case '+':
                 push(pop() + pop());
@@ -103,7 +109,8 @@ int main()
                 push(exp(pop()));
             // could add sin/cos with another symbol, but that's not satisfying
             case '\n':
-                printf("\t%.8g\n", pop());
+                r = pop();
+                printf("\t%.8g\n", r);
                 break;
             default:
                 printf("error: unknown command %s\n", s);
