@@ -1,37 +1,36 @@
+// 4-10: polish calculator with getline to read input
+// getch and ungetch become unnecessary, we can read directly from the input string/array
+// position and the input array are now external variables, used by main and getops both.
+// main will initialize the input by calling getline, and getops will read from it
 #include <stdio.h>
 #include <stdlib.h> /* for atof() */
 #include <ctype.h>
 #include <math.h>
 
 #define MAXOP   10 /* max size of operand or operator */
-#define BUFSIZE 100
 #define MAXVAL  100     /* maximum depth of val stack */
+#define MAXINPUT 100 // maximum size for the input line
 #define NUMBER   '0' /* signal that a number was found */
-#define VARIABLE '1' /* signal that a number was found */
-
 
 int getop(char []);
 void push(double);
 double pop(void);
-int getch(void);
-void ungetch(int);
+
+// external value for input
+input[MAXINPUT];
 
 /* external variables for pop and push*/
 int sp = 0;             /* next free stack position*/
 double val[MAXVAL];     /* value stack*/
-/* external variables for getch/ungetch */
-char buffer = -1;
-// 4-9: for getch and ungetch to handle EOF, we must change the type of buffer array to int:
-// indeed, EOF is not a char, and would fail to be stored in the buffer array
-int buf[BUFSIZE];      /* buffer for ungetch */
-int bufp = 0;           /* next free position in buf */
-
+position = 0; // position in the string
 /* reverse polish calculator */
 int main()
 {
     int type, r;
     double operand1, operand2;
     char s[MAXOP];
+    
+    getline(input, MAXINPUT);
 
     while ((type = getop(s)) != EOF)
     {
@@ -153,40 +152,27 @@ int getop(char s[])
 {
     int i, ch, string, sign, next;
 
-    while (isblank(s[0] = ch = getch())); // skip whitespace
-
+    while (isblank(s[0] = ch = input[position++])) // skip whitespace
+    {
+        ;
+    }
+    s[1] = '\0';
     // operator
-    if (!isdigit(ch) && ch != '.' && ch != '-')
+    if (!isdigit(ch) && ch != '.')
     {
         return ch;   
     }
     i = 0;
-    // 4-3: negative
-    // use s[i] as a buffer
-    if (ch == '-')
-    {
-        // if space after, its an minus operator
-        if ((next = getch()) == ' ' || next == '\t')
-        {
-            return ch;
-        }
-        // if digit or decimal sign behind, its a negative sign
-        else if (isdigit(next) || next == '.')
-        {
-            ch = next;
-            ungetch(next);
-        }
-    }
     if (isdigit(ch))  /* collect integer part */
     {
-        while (isdigit(s[++i] = ch = getch()))
+        while (isdigit(s[++i] = ch = input[position++]))
         {
             ;
         }
     }
     if (ch == '.')
     {
-        while (isdigit(s[++i] = ch = getch()))
+        while (isdigit(s[++i] = ch = input[position++]))
         {
             ;
         }
@@ -194,79 +180,7 @@ int getop(char s[])
     s[i] = '\0';
     if (ch != EOF)
     {
-        ungetch(ch);
+        position--;
     }
     return NUMBER;
-}
-
-/* get a (possibly pushed back) character */
-int getch(void)       
-{
-    return (bufp > 0) ? buf[--bufp] : getchar();
-}
-
-
-/* get a (possibly pushed back) character */
-int getch2(void)       
-{
-    int ch;
-    if (buffer >= 0)
-    {
-        ch = buffer;
-        buffer = -1;
-        return ch;
-    }
-    else
-    {
-        getchar();
-    }
-}
-
-/* push character back on input */
-void ungetch(int ch)
-{
-    if (bufp >= BUFSIZE)
-    {
-        printf("ungetch: too many characters\n");
-    }
-    else
-    {
-        buf[bufp++] = ch;
-    }
-}
-
-
-/* push character back on input */
-void ungetch2(int ch)
-{
-    if (buffer >= 0)
-    {
-        printf("ungetch: too many characters\n");
-    }
-    else
-    {
-        buffer = ch;
-    }
-}
-
-// 4-7: push back an entire string onto the input
-// it should know about buf and bufp just in case the string overflows the buffer array
-// which would only push part of string back.
-void ungets(char s[])
-{
-    int i;
-    char ch;
-
-    if (bufp + i >= BUFSIZE)
-    {
-        printf("ungets: too many characters\n");
-    }
-    else
-    {
-        i = 0;
-        while ((ch = s[i++]) != '\0')
-        {
-            ungetch(ch);
-        }
-    }
 }
