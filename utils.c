@@ -2,6 +2,9 @@
 #include <math.h>
 #include <string.h>
 
+// interchanges two arguements of type t.
+#define swap(t, x, y){ t _; _ = x; x = y; y = _;}
+
 void intToBinary(int x)
 {   
     // just use bitwise operations to find where there are 1's and 0's
@@ -48,7 +51,7 @@ void reverse(char s[])
     }
 }
 
-/* expands shorthand noataions like 0-9 or a-z to the equivalent complete list */
+/* expands shorthand notations like 0-9 or a-z to the equivalent complete list */
 void expand(char s1[], char s2[])
 {
     int i, j, k;
