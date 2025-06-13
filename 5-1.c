@@ -4,13 +4,28 @@
 #include <ctype.h>
 #include <stdio.h>
 
-int getch(void);
-void ungetch(int *pn);
+#define BUFSIZE 100
+#define SIZE    100
 
+int getch(void);
+void ungetch(int);
+int buf[BUFSIZE];      /* buffer for ungetch */
+int bufp = 0;           /* next free position in buf */
+
+int main()
+{
+    int n, array[SIZE];
+    int getint(int *);
+
+    for (n = 0; n < SIZE && getint(&array[n]) != EOF; n++)
+    {
+        ;
+    }
+}
 /* getint: get next integer from input into *pn */
 int getint(int *pn)
 {
-    int ch, sign;
+    int ch, next, sign;
 
     while (isspace(ch = getch())); /* skip white space */
 
@@ -22,12 +37,9 @@ int getint(int *pn)
     sign = (ch = '-') ? -1 : 1;
     if (ch == '+' || ch == '-')
     {
-        if (isdigit(ch = getch()))
+        if (!isdigit(next = getch()))
         {
-            ;
-        }
-        else
-        {
+            ungetch(next);
             ungetch(ch);
         }
     }
@@ -41,4 +53,22 @@ int getint(int *pn)
         ungetch(ch);
     }
     return ch;
+}
+
+/* get a (possibly pushed back) character */
+int getch(void)       
+{
+    return (bufp > 0) ? buf[--bufp] : getchar();
+}
+
+void ungetch(int ch)
+{
+    if (bufp >= BUFSIZE)
+    {
+        printf("ungetch: too many characters\n");
+    }
+    else
+    {
+        buf[bufp++] = ch;
+    }
 }
