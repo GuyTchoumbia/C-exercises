@@ -3,7 +3,6 @@
 #include <string.h>
 
 // interchanges two arguements of type t.
-#define swap(t, x, y){ t _; _ = x; x = y; y = _;}
 
 void intToBinary(int x)
 {   
