@@ -52,11 +52,10 @@ int getfloat(double *pn)
     // decimal part
     if (ch == '.')
     {
-        for (decimal = 0.1; isdigit(ch = getch()); decimal /= 10)
+        for (decimal = 0.1; isdigit(ch = getch()); decimal /= 10) // or use pow() from math.h
         {
             *pn += decimal * (ch - '0'); 
         }
-        // or use pow() from math.h
     }
     *pn *= sign;
     if (ch != EOF)
