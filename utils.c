@@ -104,3 +104,15 @@ void expand(char s1[], char s2[])
     }
     s2[j] = '\0';
 }
+
+/* strlen: returns the length of a string */
+size_t strlen(char *str) // size_t is the correct type for a pointer size (it's the return type of sizeof)
+{
+    char *pointer = str; // intilize a pointer (another one, that's what str is) at the start of the string
+
+    while (*pointer != '\0')
+    {
+        pointer++;
+    }
+    return pointer - str;
+}
