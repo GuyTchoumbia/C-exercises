@@ -1,22 +1,28 @@
+/* Let us illustrate by writing a program that will sort a set of text lines into alphabetic
+order, a stripped-down version of the UNIX program sort */
+/* Rewrite readlines to store lines in an array supplied by main, rather than
+calling alloc to maintain storage */
+
 #include <stdio.h>
 #include <string.h>
 
-#define MAXLINES 5000
+#define MAXLINES 50
 #define MAXLEN 1000
 
 char *lineptr[MAXLINES];
 
-int readlines(char *lineptr[], int nlines);
+int readlines(char *lineptr[], char (*buffer)[MAXLEN], int nlines);
 void writelines(char *lineptr[], int nlines);
-int getline(char *, int);
+int _getline(char *, int);
 void qsort(char *lineptr[], int left, int right);
 
 /* sort input lines */
 int main()
 {
     int nlines; // number of input lines to read
+    char buffer[MAXLINES][MAXLEN];
 
-    if ((nlines = readlines(lineptr, MAXLINES)) >= 0)
+    if ((nlines = readlines(lineptr, buffer, MAXLINES)) >= 0)
     {
         qsort(lineptr, 0, nlines - 1);
         writelines(lineptr, nlines);
@@ -29,37 +35,47 @@ int main()
     }
 }
 
-/* readlines: read input lines */
-int readlines(char *lineptr[], int maxlines)
+/* readlines: read input lines
+args:
+    char *lineptr[]: array of strings to read from
+    char (*buffer)[MAXLEN] or char[][MAXLEN]: memory buffer 
+    int maxlines: maximum number of lines to read
+return:
+int number of lines actually read
+*/
+int readlines(char *lineptr[], char (*buffer)[MAXLEN], int maxlines)
 {
     int len, nlines;
-    char *p, line[MAXLEN];
+    char line[MAXLEN]; // === char *line
 
     nlines = 0;
-    while ((len = getline(line, MAXLEN)) > 0)
+    while ((len=_getline(line, MAXLEN)) > 0)
     {
-        if (nlines >= maxlines || (p = alloc(len)) == NULL)
+        if (nlines >= maxlines)
         {
-            return -1;
+            return -1; // fail? just break, no?
         }
         else
         {
-            line[len - 1] = '\0'; // delete newline
-            strcpy(p, line);
-            lineptr[nlines++] = p;
+            line[len - 1] = '\0'; // replace newline with string termination 
+            strcpy(buffer[nlines], line);
+            lineptr[nlines] = buffer[nlines];
+            nlines++;
         }
     }
     return nlines;
 }
 
-/* writelines: write output lines */
+/* writelines: write output lines
+args:
+    char *lineptr[]:  array of strings to read from
+    int maxlines: amximum number of lines to read 
+*/
 void writelines(char *lineptr[], int nlines)
 {
-    int i;
-
-    for (i = 0; i < nlines; i++)
+    while (nlines-- > 0)
     {
-        printf("%s\n", lineptr[i]);
+        printf("%s\n", *lineptr++);
     }
 }
 
@@ -67,32 +83,54 @@ void writelines(char *lineptr[], int nlines)
 void qsort(char *v[], int left, int right)
 {
     int i, last;
-    void swap (char *v[], int i, int j);
+    void _swap (char *v[], int i, int j);
 
     if (left >= right) // do nothing if array contains fewer than 2 elements
     {
         return;
     }
-    swap(v, left, (left + right) / 2);
+    _swap(v, left, (left + right) / 2);
     last = left;
     for (i = left + 1; i <= right; i++)
     {
-        if (strcmp(v[i], v[left] < 0))
+        if (strcmp(v[i], v[left]) < 0)
         {
-            swap(v, ++last, i);
+            _swap(v, ++last, i);
         }
     }
-    swap(v, left, last);
+    _swap(v, left, last);
     qsort(v, left, last - 1);
     qsort(v, last + 1, right);
 }
 
 /* swap: interchange v[i] and v[j]*/
-void swap(char *v[], int i, int j)
+void _swap(char *v[], int i, int j)
 {
     char *temp;
 
     temp = v[i];
     v[i] = v[j];
     v[j] = temp;
+}
+
+
+/* getline: get line into s, return length */
+int _getline(char *s, int limit)
+{
+    int i;
+
+    i = 0;
+    while (--limit > 0 && (*s=getchar()) != EOF && *s != '\n')
+    {
+        s++;
+        i++;
+    }
+    if (*s == '\n')
+    {
+        s++;
+        i++; // newline character is counted in length ?!
+    }
+    *s = '\0';
+
+    return i;
 }
