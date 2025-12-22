@@ -1,98 +1,109 @@
+/* Rewrite appropriate programs from earlier chapters and exercises 
+with pointers instead of array indexing .
+Good possibilities include getline, atoi, itoa, reverse, strindex, and getop */
 #include <stdio.h>
 #include <string.h>
 
-#define MAXLINES 5000
-#define MAXLEN 1000
+#define MAXSIZE     100
 
-char *lineptr[MAXLINES];
+int _getline(char *s, int limit);
+int _strindex(char *s, char *t);
+void reverse(char *str);
 
-int readlines(char *lineptr[], int nlines);
-void writelines(char *lineptr[], int nlines);
-int getline(char *, int);
-void qsort(char *lineptr[], int left, int right);
 
-/* sort input lines */
 int main()
 {
-    int nlines; // number of input lines to read
+    // char s[MAXSIZE], t[MAXSIZE];
+    // printf("length: %d", _getline(s, MAXSIZE));
+    // STRINDEX TESTS
+    // match at the beginning
+    char s1[] = "something";
+    char t1[] = "some";
+    printf("string 1: %s, string 2: %s, index: %d\n", s1, t1, _strindex(s1, t1));
+    // match at the end
+    char s2[] = "something";
+    char t2[] = "thing";
+    printf("string 1: %s, string 2: %s, index: %d\n", s2, t2, _strindex(s2, t2));
+    // match inside
+    char s3[] = "something";
+    char t3[] = "meth";
+    printf("string 1: %s, string 2: %s, index: %d\n", s3, t3, _strindex(s3, t3));
+    // no match
+    char s4[] = "something";
+    char t4[] = "dot";
+    printf("string 1: %s, string 2: %s, index: %d\n", s4, t4, _strindex(s4, t4));
 
-    if ((nlines = readlines(lineptr, MAXLINES)) >= 0)
-    {
-        qsort(lineptr, 0, nlines - 1);
-        writelines(lineptr, nlines);
-        return 0;
-    }
-    else
-    {
-        printf("error: input too big to sort\n");
-        return 1;
-    }
+    printf("REVERSE\n");
+    printf("string: %s ", s1);
+    reverse(s1);
+    printf("---> reversed: %s\n", s1);
+    return 0;
 }
 
-/* readlines: read input lines */
-int readlines(char *lineptr[], int maxlines)
-{
-    int len, nlines;
-    char *p, line[MAXLEN];
-
-    nlines = 0;
-    while ((len = getline(line, MAXLEN)) > 0)
-    {
-        if (nlines >= maxlines || (p = alloc(len)) == NULL)
-        {
-            return -1;
-        }
-        else
-        {
-            line[len - 1] = '\0'; // delete newline
-            strcpy(p, line);
-            lineptr[nlines++] = p;
-        }
-    }
-    return nlines;
-}
-
-/* writelines: write output lines */
-void writelines(char *lineptr[], int nlines)
+/* getline: get line into s, return length */
+int _getline(char *s, int limit)
 {
     int i;
 
-    for (i = 0; i < nlines; i++)
+    i = 0;
+    while (--limit > 0 && (*s=getchar()) != EOF && *s != '\n')
     {
-        printf("%s\n", lineptr[i]);
+        s++;
+        i++;
     }
+    if (*s == '\n')
+    {
+        s++;
+        i++; // newline character is counted in length ?!
+    }
+    *s = '\0';
+
+    return i;
 }
 
-/* qsort: sort v[left]...v[right] into increasing order */
-void qsort(char *v[], int left, int right)
+/* strindex: return index of t in s, -1 if none */
+int _strindex(char *s, char *t)
 {
-    int i, last;
-    void swap (char *v[], int i, int j);
+   int index; 
+   char *s_begin;
+   char *t_begin;
 
-    if (left >= right) // do nothing if array contains fewer than 2 elements
-    {
-        return;
-    }
-    swap(v, left, (left + right) / 2);
-    last = left;
-    for (i = left + 1; i <= right; i++)
-    {
-        if (strcmp(v[i], v[left] < 0))
+   // save the pointer at the beginning of each string, in order to come back to it
+   s_begin = s;
+   t_begin = t;
+   index = 0;
+
+   while (*s)
+   {
+        while (*s == *t && *t) // not sure this works
         {
-            swap(v, ++last, i);
+            s++;
+            t++;
         }
+        if (t > t_begin && !*t)
+        {
+            return index;
+        }
+        s = ++s_begin;
+        index++;
+        t = t_begin;
     }
-    swap(v, left, last);
-    qsort(v, left, last - 1);
-    qsort(v, last + 1, right);
+    return -1;
 }
 
-/* swap: interchange v[i] and v[j]*/
-void swap(char *v[], int i, int j)
+void reverse(char *str)
 {
-    char *temp;
+    char temp;
+    char *end;
+    
+    end = str + strlen(str) - 1;
 
-    temp = v[i];
-    v[i] = v[j];
-    v[j] = temp;
+    while (str < end)
+    {
+        temp = *end;
+        *end = *str;
+        *str = temp;
+        str++;
+        end--;
+    }
 }
